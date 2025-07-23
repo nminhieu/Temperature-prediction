@@ -1,109 +1,140 @@
 📌 Paris Temperature Prediction
-📝 Giới thiệu
-Dự án "Paris Temperature Prediction" tập trung vào việc phân tích và dự đoán nhiệt độ tại thành phố Paris dựa trên dữ liệu thời tiết trong quá khứ. Với tình hình biến đổi khí hậu ngày càng nghiêm trọng, việc hiểu rõ xu hướng nhiệt độ và dự báo chính xác là cần thiết cho quy hoạch đô thị, nông nghiệp và quản lý tài nguyên.
 
-🎯 Mục đích và Ứng dụng
-Mục đích chính:
+📝 Project Overview
 
-Khám phá xu hướng nhiệt độ tại Paris trong thời gian dài.
+The Paris Temperature Prediction project focuses on analyzing and forecasting temperature trends in Paris using historical weather data. As climate change becomes increasingly severe, accurately understanding temperature patterns is crucial for urban planning, agriculture, and resource management.
 
-Xây dựng mô hình dự đoán nhiệt độ dựa trên dữ liệu lịch sử.
+🎯 Objectives & Applications
 
-Ứng dụng thực tế:
+Main Goals:
 
-Hỗ trợ các cơ quan khí tượng và môi trường trong việc theo dõi biến đổi khí hậu.
+* Explore long-term temperature trends in Paris.
 
-Cung cấp công cụ cho các nhà hoạch định chính sách, nông dân, và nhà nghiên cứu.
+* Build predictive models using historical temperature data.
 
-Là nền tảng cho các hệ thống cảnh báo sớm hoặc mô phỏng biến đổi môi trường.
+Real-World Applications:
 
-🔍 Phương pháp
-Dự án “Paris Temperature Prediction” sử dụng chuỗi các bước xử lý khoa học dữ liệu, thống kê và học máy hiện đại để dự đoán nhiệt độ tại Paris theo cả ngày và tuần. Các bước chính bao gồm:
+* Support meteorological and environmental agencies in tracking climate change.
 
-1. Kiểm tra tính dừng của chuỗi thời gian (Test for Stationarity)
-Mục tiêu: xác định xem chuỗi nhiệt độ có ổn định về mặt thống kê hay không — điều kiện cần cho nhiều mô hình dự báo thời gian.
+* Provide tools for policymakers, farmers, and researchers.
 
-Phương pháp: Sử dụng kiểm định Augmented Dickey-Fuller (ADF Test):
+* Serve as a foundation for early-warning systems or environmental simulations.
 
-Null Hypothesis (H₀): chuỗi không dừng (có xu hướng hoặc chu kỳ).
 
-Nếu p-value < 0.05 → bác bỏ H₀ → chuỗi dừng.
+📁 Project Structure
 
-2. Xử lý sai số chuỗi (Differencing Operations)
-Nếu chuỗi không dừng, tiến hành lấy sai phân bậc 1 hoặc bậc 2 để ổn định trung bình.
+├── data/   
+ │   ├── paris_temperature.csv    
+├── notebooks/    
+│   ├── eda_stationarity.ipynb    
+│   ├── prophet_model.ipynb      
+│   ├── daily_model_lgb_rf.ipynb      
+│   ├── weekly_model_lgb_rf.ipynb     
+├── src/      
+│   ├── features.py      
+│   ├── train_model.py      
+│   ├── evaluate.py      
+├── README.md
 
-Áp dụng:
 
-python
-Sao chép
-Chỉnh sửa
+🔍 Methodology
+
+The project applies a comprehensive data science pipeline, including statistical techniques and modern machine learning models, to forecast daily and weekly temperatures in Paris.
+
+1. Test for Stationarity
+
+Purpose: Determine whether the time series is statistically stable — a requirement for many forecasting models.
+
+Method:
+
+* Augmented Dickey-Fuller (ADF) Test
+
+   * Null Hypothesis (H₀): The series is non-stationary (has trends or cycles).
+
+  * If p-value < 0.05 → Reject H₀ → Series is stationary
+
+2. Differencing Operations
+   
+If the series is non-stationary, apply first or second-order differencing to stabilize the mean.
+
 df['Temp_diff'] = df['Temperature'].diff().dropna()
-Mục đích: làm phẳng chuỗi, loại bỏ xu hướng tăng/giảm qua thời gian.
 
-3. Dự báo nhanh bằng Prophet (Quick Prophet Model)
-Mục tiêu: áp dụng mô hình Prophet của Meta để thử nghiệm khả năng dự báo nhanh trên chuỗi thời gian theo ngày.
+Goal: Flatten the series by removing upward/downward trends.
 
-Đặc điểm của Prophet:
+3. Quick Forecasting with Prophet
+   
+Goal: Use Meta's Prophet model for fast and robust time series forecasting.
 
-Tự động xử lý xu hướng và mùa vụ.
+Prophet Highlights:
 
-Có thể thêm holidays hoặc sự kiện để cải thiện dự báo.
+* Automatically handles trends and seasonality.
 
-Cách áp dụng:
+* Allows integration of holidays/events for better accuracy.
 
-Đổi tên cột Date → ds, Temperature → y theo chuẩn Prophet.
+Steps:
 
-Huấn luyện và dự báo bằng Prophet với cấu trúc đơn giản.
+* Rename columns: Date → ds, Temperature → y
 
-4. Kỹ thuật tạo đặc trưng (Feature Engineering)
-Tạo thêm các đặc trưng từ cột ngày (datetime) như:
+* Train and forecast with a basic Prophet setup.
 
-dayofweek, month, quarter, is_weekend, dayofyear, lag features,...
+4. Feature Engineering
+Create new features from the datetime column, such as:
 
-Lag Features: thêm các đặc trưng như nhiệt độ hôm qua, 2 ngày trước:
+* dayofweek, month, quarter, is_weekend, dayofyear
 
-python
-Sao chép
-Chỉnh sửa
+* Lag Features: Previous days' temperatures
+
+
 df['temp_lag1'] = df['Temperature'].shift(1)
+
 df['temp_lag7'] = df['Temperature'].shift(7)
-5. Huấn luyện mô hình theo tần suất hàng ngày (Daily Model)
-🔧 Các mô hình sử dụng:
-LightGBM Regressor: Gradient boosting với tốc độ nhanh và khả năng xử lý dữ liệu lớn.
 
-Random Forest Regressor: Ensemble model mạnh mẽ với khả năng chống overfitting tốt.
+5. Daily Forecasting Models
+   
+Models Used:
 
-🔁 Các bước:
-Chia dữ liệu theo ngày làm training/test (ví dụ: train đến 2021, test 2022).
+* LightGBM Regressor: Fast, efficient gradient boosting for large datasets.
 
-Dùng các đặc trưng đã tạo ở trên để huấn luyện mô hình.
+* Random Forest Regressor: Robust ensemble model, good against overfitting.
 
-Đánh giá kết quả qua:
+Steps:
 
-MAE (Mean Absolute Error)
+* Split data into train/test sets (e.g., train until 2021, test on 2022).
 
-RMSE (Root Mean Square Error)
+* Use engineered features for model training.
 
-MAPE (Mean Absolute Percentage Error)
+* Evaluate results using:
 
-6. Huấn luyện mô hình theo tần suất hàng tuần (Weekly Model)
-🗓 Chuẩn bị:
-Gộp dữ liệu theo tuần bằng .resample('W').mean() để lấy nhiệt độ trung bình tuần.
+     * MAE (Mean Absolute Error)
 
-Áp dụng lại quá trình feature engineering và tạo lag features theo tuần.
+     * RMSE (Root Mean Square Error)
 
-🧠 Áp dụng:
-Dùng LightGBM và Random Forest để dự báo nhiệt độ tuần kế tiếp dựa vào các tuần trước.
+     * MAPE (Mean Absolute Percentage Error)
 
-Mô hình weekly giúp làm mượt dữ liệu và loại bỏ nhiễu ngắn hạn.
+6. Weekly Forecasting Models
+Preparation:
 
-7. Trực quan hóa và đánh giá mô hình
-Vẽ biểu đồ so sánh giữa nhiệt độ dự đoán và thực tế theo ngày và tuần.
+* Aggregate daily data to weekly using:
 
-So sánh độ chính xác giữa:
 
-Prophet vs. LightGBM vs. Random Forest
+df_weekly = df.resample('W').mean()
 
-Daily vs. Weekly model
+* Re-apply feature engineering and lag creation.
 
-Phân tích lỗi tại các mốc dị thường hoặc thời điểm model hoạt động kém hiệu quả.
+Application:
+
+* Train LightGBM and Random Forest on weekly data to predict next week's temperature.
+
+* Weekly models help smooth out short-term noise and improve long-term patterns.
+
+📊 Visualization & Evaluation
+
+* Plot predicted vs. actual temperatures (daily & weekly).
+
+* Compare model performance:
+
+    * Prophet vs. LightGBM vs. Random Forest
+
+    * Daily vs. Weekly Models
+
+* Analyze prediction errors, especially at anomaly points or underperforming periods.
